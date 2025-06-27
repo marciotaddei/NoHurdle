@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/mainScreen"
+        android:fitsSystemWindows="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:background="#FFFFFF">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+<!--            <ImageView-->
+<!--                android:id="@+id/beeLogoImage"-->
+<!--                android:layout_width="0sp"-->
+<!--                android:layout_weight="1"-->
+<!--                android:layout_height="match_parent"-->
+<!--                android:src="@drawable/bee_logo"-->
+<!--                android:padding="0dp"-->
+<!--                android:scaleType="fitCenter"-->
+<!--                android:contentDescription="@string/txt_bee_logo"/>-->
+
+            <TextView
+                android:id="@+id/appLogo"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:gravity="top|center_horizontal"
+                android:includeFontPadding="false"
+                android:text="🚧"
+                android:textSize="40sp"
+                android:textColor="#000000"/>
+
+            <TextView
+                android:id="@+id/appTitle"
+                android:layout_width="0sp"
+                android:layout_weight="6"
+                android:layout_height="wrap_content"
+                android:gravity="top|center_horizontal"
+                android:includeFontPadding="false"
+                android:text="NoHurdle"
+                android:textSize="44sp"
+                android:textColor="#000000"
+                android:textStyle="bold"/>
+
+            <ImageButton
+                android:id="@+id/menuButton"
+                android:layout_height="match_parent"
+                android:layout_width="0sp"
+                android:layout_weight="1"
+                android:padding="8sp"
+                android:contentDescription="@string/txt_gear_icon"
+                android:src="@drawable/gear"
+                android:scaleType="fitCenter"
+                android:background="?attr/selectableItemBackgroundBorderless"/>
+
+        </LinearLayout>
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            tools:ignore="SpeakableTextPresentCheck">
+
+            <TableLayout
+                android:id="@+id/inputBoxes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="16dp"
+                android:stretchColumns="*" />
+
+        </ScrollView>
+
+        <Button
+            android:id="@+id/findWords"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:backgroundTint="#404040"
+            android:textSize="22sp"
+            android:textColor="#DFDFDF"
+            android:textStyle="bold"
+            android:text="Find words" />
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:backgroundTint="#000040"
+            android:fillViewport="true"
+            tools:ignore="SpeakableTextPresentCheck">
+
+        <TextView
+            android:id="@+id/resultsTable"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+<!--            <TableLayout-->
+<!--                android:id="@+id/resultsTable"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="0sp"-->
+<!--                android:stretchColumns="1"/>-->
+        </ScrollView>
+
+    </LinearLayout>
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
