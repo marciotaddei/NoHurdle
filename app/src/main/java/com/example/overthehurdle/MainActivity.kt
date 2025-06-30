@@ -1,7 +1,7 @@
 package com.example.overthehurdle
 
 import android.content.res.Resources
-import android.graphics.Color
+//import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
@@ -13,61 +13,119 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.View
+//import android.view.ViewGroup
+//import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
+import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.ScrollView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 //import android.widget.TableLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import androidx.core.graphics.toColorInt
 import java.io.BufferedReader
 import kotlin.Int
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var inputBoxTable: LinearLayout
+    private lateinit var rootLayout: View //= findViewById<View>(R.id.root_layout)
+    private lateinit var headerView : LinearLayout
+    private lateinit var boxScroller: ScrollView //= findViewById<ScrollView>(R.id.boxScroller)
     private lateinit var searchButton: Button
+    private lateinit var resultsScroller: ScrollView //= findViewById<ScrollView>(R.id.resultsScroller)
     private lateinit var resultsTable: GridLayout
+
+    private lateinit var inputBoxTable: LinearLayout
     private val numBoxesPerRow = 5
     private val rows = mutableListOf<List<EditText>>() // Store 2D list of rows
-    val coloredBoxes = listOf(
-        R.drawable.box_default,
-        R.drawable.box_wrong,
-        R.drawable.box_elsewhere,
-        R.drawable.box_correct )
+    val coloredBoxes = listOf(R.drawable.box_default, R.drawable.box_wrong,
+                        R.drawable.box_elsewhere, R.drawable.box_correct )
     val cellColorMap = mutableMapOf<EditText, Int>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        inputBoxTable = findViewById(R.id.inputBoxes)
-        searchButton  = findViewById(R.id.findWords)
-        resultsTable  = findViewById(R.id.resultsTable)
+        rootLayout = findViewById<View>(R.id.root_layout)
+        headerView = findViewById<LinearLayout>(R.id.header)
+        val resetButton = findViewById<ImageButton>(R.id.resetButton)
+        boxScroller = findViewById<ScrollView>(R.id.boxScroller)
+        inputBoxTable = findViewById<LinearLayout>(R.id.inputBoxes)
+        searchButton  = findViewById<Button>(R.id.findWords)
+        resultsScroller = findViewById<ScrollView>(R.id.resultsScroller)
+        resultsTable  = findViewById<GridLayout>(R.id.resultsTable)
+
+//        rootLayout.viewTreeObserver.addOnGlobalLayoutListener(object :
+//            ViewTreeObserver.OnGlobalLayoutListener {
+//            override fun onGlobalLayout() {updateScrollerHeights()}})
 
         addNewRow()
         attachListenersToAllBoxes()
+//        runAfterNextLayout(inputBoxTable) {updateScrollerHeights()}
+
+        resetButton.setOnClickListener {
+            resultsTable.removeAllViews()
+            inputBoxTable.removeAllViews()
+            addNewRow()
+            attachListenersToAllBoxes()
+//            inputBoxTable.requestLayout()
+//            inputBoxTable.post{updateScrollerHeights()} //resultsTable will have 0 height
+        }
 
         searchButton.setOnClickListener {
-            Toast.makeText(this, "Searching...", Toast.LENGTH_SHORT).show()
-            val currentKnowledge = rows.map{row->
-                row.map{Pair(it.text.firstOrNull()?.lowercaseChar(), cellColorMap[it]!!)}
+            resultsTable.removeAllViews()
+            //delete empty box rows (except last)
+            for (i in rows.size - 2 downTo 0) {
+                val rowEditTexts = rows[i]
+                if (rowEditTexts.all { it.text.isNullOrBlank() }) {
+                    val rowLayout = rowEditTexts.first().parent as? LinearLayout
+                    rowLayout?.let { inputBoxTable.removeView(it) }
+                    rows.removeAt(i)
+                }
             }
 
+            val currentKnowledge = rows.map{row->
+            row.map{Pair(it.text.firstOrNull()?.lowercaseChar(), cellColorMap[it]!!)}}
+            if(currentKnowledge.all{row -> row.all{it.first==null || it.second==0}})
+                return@setOnClickListener
 
+            var theToast: Toast? = null
+            theToast = Toast.makeText(this, "Searching...", Toast.LENGTH_SHORT)
+            theToast?.show()
 
-            val wordledDict =
-                BufferedReader(assets.open("precise_wordled.txt").reader())
-                    .readLines()
-            val matches = findMatches(currentKnowledge, wordledDict)
+            listOf<String>("precise_wordled.txt","mega_wordled.txt","gigantic_wordled.txt").
+                    forEachIndexed { i, fileName ->
+                        val wordledDict =
+                            BufferedReader(assets.open(fileName).reader())
+                                .readLines()
+                        val matches = findMatches(currentKnowledge, wordledDict)
+                        printWords(matches, resultsTable, i)}
 
-            printWords(matches, resultsTable)
+//            resultsTable.requestLayout()
+//            resultsTable.post {updateScrollerHeights()}
+
+            theToast?.cancel()
+            theToast = null
+
         }
     }
+
+//    private fun runAfterNextLayout(view: View, action: () -> Unit) {
+//        view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
+//            override fun onPreDraw(): Boolean {
+//                view.viewTreeObserver.removeOnPreDrawListener(this)
+//                action()
+//                return true
+//            }
+//        })
+//    }
 
     private fun addNewRow() {
         val rowLayout = LinearLayout(this).apply {
@@ -92,6 +150,7 @@ class MainActivity : AppCompatActivity() {
                     })
                 setPadding(0, 0, 0, 0)
                 gravity = Gravity.CENTER
+                setTextColor("#FFFFFF".toColorInt())
                 textSize = 40f
                 typeface = Typeface.DEFAULT_BOLD
                 imeOptions = EditorInfo.IME_ACTION_NEXT
@@ -144,9 +203,11 @@ class MainActivity : AppCompatActivity() {
                     override fun afterTextChanged(s: Editable?) {
                         if (s?.length == 1) {
                             moveToNextInput(rowIndex, colIndex)
-                            if (row.all { it.text.length == 1 } && isLastRow(rowIndex)) {
+                            if (row.all { it.text.length == 1 } && rowIndex == rows.lastIndex ) {
                                 addNewRow()
                                 attachListenersToAllBoxes()
+//                                inputBoxTable.requestLayout()
+//                                inputBoxTable.post{updateScrollerHeights()}
                             }
                         }
                     }
@@ -174,9 +235,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun isLastRow(rowIndex: Int): Boolean {
-        return rowIndex == rows.lastIndex
-    }
+//    private fun isLastRow(rowIndex: Int): Boolean {
+//        return rowIndex == rows.lastIndex
+//    }
 
     private fun moveToNextInput(rowIndex: Int, colIndex: Int) {
         if (rowIndex >= rows.size) return
@@ -192,6 +253,43 @@ class MainActivity : AppCompatActivity() {
             rows[rowIndex + 1][0].requestFocus()
         }
     }
+
+
+//    private fun updateScrollerHeights() {
+//        val topHeight = inputBoxTable.measuredHeight
+//        val bottomHeight = resultsTable.measuredHeight
+//        val remainingHeight = rootLayout.height
+//                -headerView.height - searchButton.height
+//
+//        when {
+//            topHeight + bottomHeight <= remainingHeight -> {
+//                // Both fit, give exact height
+//                boxScroller.layoutParams.height = topHeight
+//                resultsScroller.layoutParams.height = bottomHeight
+//            }
+//
+//            topHeight <= remainingHeight / 3 -> {
+//                // Top is short, give it only what it needs
+//                boxScroller.layoutParams.height = topHeight
+//                resultsScroller.layoutParams.height = remainingHeight - topHeight
+//            }
+//
+//            bottomHeight <= remainingHeight / 3 -> {
+//                // Bottom is short
+//                resultsScroller.layoutParams.height = bottomHeight
+//                boxScroller.layoutParams.height = remainingHeight - bottomHeight
+//            }
+//
+//            else -> {
+//                // Both are big → apply default 2:1 ratio
+//                boxScroller.layoutParams.height = remainingHeight * 2 / 3
+//                resultsScroller.layoutParams.height = remainingHeight / 3
+//            }
+//        }
+//        Log.d("LayoutDebug", "TopH: $topHeight  BottomH: $bottomHeight  Available: $remainingHeight")
+//        boxScroller.requestLayout()
+//        resultsScroller.requestLayout()
+//    }
 
     private fun findMatches(currentKnowledge: List<List<Pair<Char?,Int>>>,
                             wordledDict:List<String>):List<String>{
@@ -231,8 +329,11 @@ class MainActivity : AppCompatActivity() {
         lettersIn.keys.retainAll{ it !in lettersOut}
         letterPosOut.keys.retainAll{ it !in lettersOut}
 
-        Log.d("Constraints", letterPosIn.toString() + lettersIn.toString() +
-                letterPosOut.toString()+ lettersOut.toString())
+        Log.d("Constraints", "Letters in: " + lettersIn.toString()
+                + ", letters out: " + lettersOut.toString()
+                +", pos in: " + letterPosIn.toString()
+                + ", pos not: " + letterPosOut.toString())
+
 
         var possibleWords : List<String> = wordledDict
         possibleWords = possibleWords.filter { word ->
@@ -255,14 +356,32 @@ class MainActivity : AppCompatActivity() {
         return possibleWords
     }
 
-    private fun printWords(matches: List<String>, resultsTable: GridLayout){
-        resultsTable.removeAllViews()
-//        val nCols = resultsTable.columnCount
+    private fun printWords(matches: List<String>, resultsTable: GridLayout, category: Int){
         val cellWidth = Resources.getSystem().displayMetrics.widthPixels/resultsTable.columnCount
         val paint = Paint().apply {
-            typeface = Typeface.DEFAULT_BOLD // Match your actual text style
+            typeface = Typeface.DEFAULT_BOLD
             textSize = 100f} // Arbitrary large size for scale factor
         val maxTextSizePx = 100f * (cellWidth * 0.9f / paint.measureText("MMMMM"))
+
+        //variable for background color and text on how likely
+        val likelyColor = when(category){
+            0->Pair("likely",ContextCompat.getColor(this, R.color.light_green))
+            1->Pair("less likely",ContextCompat.getColor(this, R.color.light_yellow))
+            2->Pair("unlikely",ContextCompat.getColor(this, R.color.light_red))
+            else->Pair("unknown-status",ContextCompat.getColor(this, R.color.light_gray))}
+
+        val string = likelyColor.first +" words: " + matches.size.toString()
+        val header = TextView(this).apply {
+            text = string
+            setTextColor(ContextCompat.getColor(context,R.color.white))
+            gravity = Gravity.CENTER
+            typeface = Typeface.DEFAULT_BOLD
+            layoutParams = GridLayout.LayoutParams(
+                GridLayout.spec(GridLayout.UNDEFINED),  // current row
+                GridLayout.spec(0, 4)  // span 4 columns
+            ).apply { width = GridLayout.LayoutParams.MATCH_PARENT }
+        }
+        resultsTable.addView(header)
 
         for (word in matches) {
             val textView = TextView(this).apply {
@@ -270,8 +389,9 @@ class MainActivity : AppCompatActivity() {
                 typeface = Typeface.DEFAULT_BOLD
                 setPadding(0, 0, 0, 0)
                 setTextSize(TypedValue.COMPLEX_UNIT_PX,maxTextSizePx)
+                setTextColor(ContextCompat.getColor(context, R.color.black))
                 gravity = Gravity.CENTER
-                setBackgroundColor(Color.LTGRAY)
+                setBackgroundColor(likelyColor.second)
                 layoutParams = GridLayout.LayoutParams().apply {
                     width = 0
                     height = GridLayout.LayoutParams.WRAP_CONTENT

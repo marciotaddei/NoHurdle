@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.OverTheHurdle" parent="Theme.AppCompat.Light.NoActionBar" />
+    <style name="Theme.NoHurdle" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:background">#000000</item>
+        <item name="android:statusBarColor">#000000</item>
+        <item name="android:navigationBarColor">#000000</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:gravity">center</item>
+    </style>
 </resources>
