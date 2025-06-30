@@ -96,20 +96,18 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:backgroundTint="#000040"
             android:fillViewport="true"
             tools:ignore="SpeakableTextPresentCheck">
 
-        <TextView
-            android:id="@+id/resultsTable"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"/>
-<!--            <TableLayout-->
-<!--                android:id="@+id/resultsTable"-->
-<!--                android:layout_width="match_parent"-->
-<!--                android:layout_height="wrap_content"-->
-<!--                android:padding="0sp"-->
-<!--                android:stretchColumns="1"/>-->
+            <GridLayout
+                android:id="@+id/resultsTable"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:columnCount="4"
+                android:padding="0sp"
+                android:orientation="horizontal"
+                android:alignmentMode="alignMargins"
+                android:useDefaultMargins="true"/>
         </ScrollView>
 
     </LinearLayout>

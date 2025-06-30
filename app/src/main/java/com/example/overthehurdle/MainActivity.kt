@@ -1,5 +1,8 @@
 package com.example.overthehurdle
 
+import android.content.res.Resources
+import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
 import android.text.Editable
@@ -7,12 +10,15 @@ import android.text.InputFilter
 import android.text.InputType
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
+import android.widget.GridLayout
 import android.widget.TextView
+import android.widget.ScrollView
 import android.widget.LinearLayout
 //import android.widget.TableLayout
 import android.widget.Toast
@@ -20,13 +26,12 @@ import androidx.appcompat.app.AppCompatActivity
 import java.io.BufferedReader
 import kotlin.Int
 import kotlin.math.max
-import kotlin.math.min
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var inputBoxTable: LinearLayout
     private lateinit var searchButton: Button
-    private lateinit var resultsTable: TextView
+    private lateinit var resultsTable: GridLayout
     private val numBoxesPerRow = 5
     private val rows = mutableListOf<List<EditText>>() // Store 2D list of rows
     val coloredBoxes = listOf(
@@ -53,15 +58,14 @@ class MainActivity : AppCompatActivity() {
                 row.map{Pair(it.text.firstOrNull()?.lowercaseChar(), cellColorMap[it]!!)}
             }
 
-//            resultsTable.removeAllViews()
+
 
             val wordledDict =
                 BufferedReader(assets.open("precise_wordled.txt").reader())
                     .readLines()
             val matches = findMatches(currentKnowledge, wordledDict)
 
-            resultsTable.text = matches.toString()
-
+            printWords(matches, resultsTable)
         }
     }
 
@@ -209,7 +213,7 @@ class MainActivity : AppCompatActivity() {
                     letterPosOut.putIfAbsent(letter, mutableListOf())
                     letterPosOut[letter]!!.add(i)
                     howManyEach[letter] = Pair((howManyEach[letter]?.first ?:0) +1,
-                                            howManyEach[letter]?.second == true ) //not redundant becasue of null
+                                            howManyEach[letter]?.second == true ) //not redundant because of null
                 }
                 if (status==3) {
                     letterPosIn.add(Pair(i,letter))
@@ -223,20 +227,59 @@ class MainActivity : AppCompatActivity() {
                                         lettersIn[letter]!!.second || pair.second)
             }
         }
-        for((letter, pair) in lettersIn)
-            {if(pair==Pair(0,true))lettersOut.add(letter)}
+        for((letter, pair) in lettersIn) {if(pair==Pair(0,true))lettersOut.add(letter)}
         lettersIn.keys.retainAll{ it !in lettersOut}
         letterPosOut.keys.retainAll{ it !in lettersOut}
 
-        Log.d("Constraints", letterPosIn.toString() + lettersIn.toString() + letterPosOut.toString()+ lettersOut.toString())
+        Log.d("Constraints", letterPosIn.toString() + lettersIn.toString() +
+                letterPosOut.toString()+ lettersOut.toString())
+
         var possibleWords : List<String> = wordledDict
         possibleWords = possibleWords.filter { word ->
-            for( (index, letter) in letterPosIn)
-                {if(word[index]!=letter) return@filter false}
-            true
-        }
+            for( (index, letter) in letterPosIn) {if(word[index]!=letter) return@filter false}
+            true}
+        possibleWords = possibleWords.filter{word -> (word.all{it !in lettersOut})}
+        possibleWords = possibleWords.filter{ word ->
+            for((letter, posList) in letterPosOut) {
+                for(pos in posList){ if(word[pos]==letter) return@filter false}}
+            true}
+        possibleWords = possibleWords.filter{word ->
+            val wordCharCount = word.groupingBy { it }.eachCount()
+            for((letter, countCond) in lettersIn){
+                if((wordCharCount[letter]?:0) < countCond.first){return@filter false}
+                if((wordCharCount[letter]?:0) > countCond.first && countCond.second)
+                    {return@filter false}
+                }
+            true}
 
         return possibleWords
+    }
+
+    private fun printWords(matches: List<String>, resultsTable: GridLayout){
+        resultsTable.removeAllViews()
+//        val nCols = resultsTable.columnCount
+        val cellWidth = Resources.getSystem().displayMetrics.widthPixels/resultsTable.columnCount
+        val paint = Paint().apply {
+            typeface = Typeface.DEFAULT_BOLD // Match your actual text style
+            textSize = 100f} // Arbitrary large size for scale factor
+        val maxTextSizePx = 100f * (cellWidth * 0.9f / paint.measureText("MMMMM"))
+
+        for (word in matches) {
+            val textView = TextView(this).apply {
+                text = word.uppercase()
+                typeface = Typeface.DEFAULT_BOLD
+                setPadding(0, 0, 0, 0)
+                setTextSize(TypedValue.COMPLEX_UNIT_PX,maxTextSizePx)
+                gravity = Gravity.CENTER
+                setBackgroundColor(Color.LTGRAY)
+                layoutParams = GridLayout.LayoutParams().apply {
+                    width = 0
+                    height = GridLayout.LayoutParams.WRAP_CONTENT
+                    columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
+                }
+            }
+            resultsTable.addView(textView)
+        }
     }
 }
 
