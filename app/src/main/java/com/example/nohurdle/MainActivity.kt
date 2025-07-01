@@ -12,7 +12,6 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
-//import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -20,14 +19,12 @@ import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.LinearLayout
-//import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-//import androidx.compose.material3.Text
 import androidx.core.content.ContextCompat
-import androidx.core.graphics.toColorInt
+//import androidx.core.graphics.toColorInt
 import java.io.BufferedReader
-import kotlin.Int
+//import kotlin.Int
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
@@ -128,7 +125,7 @@ class MainActivity : AppCompatActivity() {
                     })
                 setPadding(0, 0, 0, 0)
                 gravity = Gravity.CENTER
-                setTextColor("#FFFFFF".toColorInt())
+                setTextColor(getColor(R.color.white))
                 textSize = 40f
                 typeface = Typeface.DEFAULT_BOLD
                 imeOptions = EditorInfo.IME_ACTION_NEXT
