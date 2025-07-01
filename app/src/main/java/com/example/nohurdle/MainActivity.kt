@@ -12,7 +12,7 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
-import android.view.View
+//import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -20,7 +20,7 @@ import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.LinearLayout
-import android.widget.ScrollView
+//import android.widget.ScrollView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 //import androidx.compose.material3.Text
@@ -32,11 +32,11 @@ import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var rootLayout: View //= findViewById<View>(R.id.root_layout)
-    private lateinit var headerView : LinearLayout
-    private lateinit var boxScroller: ScrollView //= findViewById<ScrollView>(R.id.boxScroller)
+//    private lateinit var rootLayout: View //= findViewById<View>(R.id.root_layout)
+//    private lateinit var headerView : LinearLayout
+//    private lateinit var boxScroller: ScrollView //= findViewById<ScrollView>(R.id.boxScroller)
     private lateinit var searchButton: Button
-    private lateinit var resultsScroller: ScrollView //= findViewById<ScrollView>(R.id.resultsScroller)
+//    private lateinit var resultsScroller: ScrollView //= findViewById<ScrollView>(R.id.resultsScroller)
     private lateinit var resultsTable: GridLayout
 
     private lateinit var inputBoxTable: LinearLayout
@@ -50,13 +50,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        rootLayout = findViewById<View>(R.id.root_layout)
-        headerView = findViewById<LinearLayout>(R.id.header)
+//        rootLayout = findViewById<View>(R.id.root_layout)
+//        headerView = findViewById<LinearLayout>(R.id.header)
         val resetButton = findViewById<ImageButton>(R.id.resetButton)
-        boxScroller = findViewById<ScrollView>(R.id.boxScroller)
+//        boxScroller = findViewById<ScrollView>(R.id.boxScroller)
         inputBoxTable = findViewById<LinearLayout>(R.id.inputBoxes)
         searchButton  = findViewById<Button>(R.id.findWords)
-        resultsScroller = findViewById<ScrollView>(R.id.resultsScroller)
+//        resultsScroller = findViewById<ScrollView>(R.id.resultsScroller)
         resultsTable  = findViewById<GridLayout>(R.id.resultsTable)
 
         addNewRow()
