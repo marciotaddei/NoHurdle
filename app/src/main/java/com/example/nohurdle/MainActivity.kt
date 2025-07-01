@@ -12,6 +12,9 @@ import android.util.Log
 import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -19,9 +22,11 @@ import android.widget.GridLayout
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.LinearLayout
+import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.updateLayoutParams
 import java.io.BufferedReader
 import kotlin.math.max
 
@@ -37,9 +42,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputBoxTable: LinearLayout
     private val numBoxesPerRow = 5
     private val rows = mutableListOf<List<EditText>>() // Store 2D list of rows
-    val coloredBoxes = listOf(R.drawable.box_default, R.drawable.box_wrong,
+    val coloredBoxes = listOf(R.drawable.box_wrong,
                         R.drawable.box_elsewhere, R.drawable.box_correct )
     val cellColorMap = mutableMapOf<EditText, Int>()
+    //R.drawable.box_default,
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,20 +72,19 @@ class MainActivity : AppCompatActivity() {
 
         searchButton.setOnClickListener {
             resultsTable.removeAllViews()
-            //delete empty box rows (except last)
-            for (i in rows.size - 2 downTo 0) {
-                val rowEditTexts = rows[i]
-                if (rowEditTexts.all { it.text.isNullOrBlank() }) {
-                    val rowLayout = rowEditTexts.first().parent as? LinearLayout
-                    rowLayout?.let { inputBoxTable.removeView(it) }
-                    rows.removeAt(i)
-                    attachListenersToAllBoxes()
+            deleteEmptyRows()
+
+            //set box_default to box_wrong
+            rows.forEach{row-> row.forEach { cell ->
+                if(!cell.text.isEmpty() && cellColorMap[cell]==0)
+                    {Log.d("Inner forEach", cell.text.toString())
+                    cell.setBackgroundResource(coloredBoxes[0])}
                 }
             }
 
             val currentKnowledge = rows.map{row->
             row.map{Pair(it.text.firstOrNull()?.lowercaseChar(), cellColorMap[it]!!)}}
-            if(currentKnowledge.all{row -> row.all{it.first==null || it.second==0}})
+            if(currentKnowledge.all{row -> row.all{it.first==null || it.second==-1}})
                 return@setOnClickListener
 
             var theToast: Toast? = null
@@ -96,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
             theToast?.cancel()
             theToast = null
-            searchButton.requestFocus()
+
         }
     }
 
@@ -127,15 +132,53 @@ class MainActivity : AppCompatActivity() {
                 textSize = 40f
                 typeface = Typeface.DEFAULT_BOLD
                 imeOptions = EditorInfo.IME_ACTION_NEXT
+                importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
                 isLongClickable = true
-                setBackgroundResource(coloredBoxes[0])
+                setBackgroundResource(R.drawable.box_default)
                 cellColorMap[this] = 0
                 //the colors have no inter-cell relation, so create the listener here
-                setOnLongClickListener {
+                setOnClickListener {
                     val nextIndex = ((cellColorMap[this] ?: 0) + 1) % coloredBoxes.size
                     setBackgroundResource(coloredBoxes[nextIndex])
-                    cellColorMap[this] = nextIndex
-                    true}
+                    cellColorMap[this] = nextIndex}
+                //Pop-up on long click
+                setOnLongClickListener{cell ->
+                    val popupView = LayoutInflater.from(context)
+                        .inflate(R.layout.colors_popup, null, false)
+
+                    val popupWindow = PopupWindow(popupView,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        ViewGroup.LayoutParams.WRAP_CONTENT,
+                        true) //optional part later
+
+                    listOf(R.id.boxGray, R.id.boxYellow, R.id.boxGreen)
+                        .forEach{box->
+                            popupView.findViewById<ImageButton>(box).
+                            apply{updateLayoutParams<LinearLayout.LayoutParams>{
+                                height = cell.width*3/4
+                                width  = cell.width*3/4}
+                            }
+                        }
+
+                    popupWindow.showAsDropDown(cell,0,0,Gravity.CENTER_HORIZONTAL)
+
+                    popupView.findViewById<ImageButton>(R.id.boxGray)
+                        .setOnClickListener{
+                            (cell as EditText).setBackgroundResource(coloredBoxes[0])
+                            cellColorMap[cell] = 0
+                            popupWindow.dismiss()}
+                    popupView.findViewById<ImageButton>(R.id.boxYellow)
+                        .setOnClickListener{
+                            (cell as EditText).setBackgroundResource(coloredBoxes[1])
+                            cellColorMap[cell] = 1
+                            popupWindow.dismiss()}
+                    popupView.findViewById<ImageButton>(R.id.boxGreen)
+                        .setOnClickListener{
+                            (cell as EditText).setBackgroundResource(coloredBoxes[2])
+                            cellColorMap[cell] = 2
+                            popupWindow.dismiss()}
+                    true
+                }
             }
             rowEditTexts.add(editText)
             rowLayout.addView(editText)
@@ -206,6 +249,18 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun deleteEmptyRows() {//except last row
+        for (i in rows.size - 2 downTo 0) {
+            val rowEditTexts = rows[i]
+            if (rowEditTexts.all { it.text.isNullOrBlank() }) {
+                val rowLayout = rowEditTexts.first().parent as? LinearLayout
+                rowLayout?.let { inputBoxTable.removeView(it) }
+                rows.removeAt(i)
+                attachListenersToAllBoxes()
+            }
+        }
+    }
+
     private fun moveToNextInput(rowIndex: Int, colIndex: Int) {
         if (rowIndex >= rows.size) return
         val currentRow = rows[rowIndex]
@@ -226,19 +281,19 @@ class MainActivity : AppCompatActivity() {
         for(word in currentKnowledge){
             var howManyEach = mutableMapOf<Char,Pair<Int, Boolean>>() //letter, how many in, if any gray came out
             word.forEachIndexed{ i, (letter, status) ->
-                if (letter==null || status==0) return@forEachIndexed
-                else if (status==1){
+                if (letter==null || status==-1) return@forEachIndexed
+                else if (status==0){
                     letterPosOut.putIfAbsent(letter, mutableListOf())
                     letterPosOut[letter]!!.add(i)
                     howManyEach[letter] = Pair(howManyEach[letter]?.first ?:0, true) //if not present, default to lower bound of 0
                 }
-                else if (status==2){
+                else if (status==1){
                     letterPosOut.putIfAbsent(letter, mutableListOf())
                     letterPosOut[letter]!!.add(i)
                     howManyEach[letter] = Pair((howManyEach[letter]?.first ?:0) +1,
                                             howManyEach[letter]?.second == true ) //not redundant because of null
                 }
-                if (status==3) {
+                if (status==2) {
                     letterPosIn.add(Pair(i,letter))
                     howManyEach[letter] = Pair((howManyEach[letter]?.first ?:0) +1,
                         howManyEach[letter]?.second == true )

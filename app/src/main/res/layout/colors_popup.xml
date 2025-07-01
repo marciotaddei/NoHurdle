@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="wrap_content"
+    android:layout_width="wrap_content"
+    android:orientation="horizontal"
+    android:padding="2dp"
+    android:backgroundTint="@color/white">
+    <!--android:background="@drawable/popup_background" e.g. rounded corners + shadow -->
+
+
+    <ImageButton
+        android:id="@+id/boxGray"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/box_wrong"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="2dp"
+        android:contentDescription="gray"/>
+
+    <ImageButton
+        android:id="@+id/boxYellow"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/box_elsewhere"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="2dp"
+        android:contentDescription="yellow"/>
+
+    <ImageButton
+        android:id="@+id/boxGreen"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:src="@drawable/box_correct"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:padding="2dp"
+        android:contentDescription="green"/>
+
+    <!-- add more as needed -->
+</LinearLayout>
