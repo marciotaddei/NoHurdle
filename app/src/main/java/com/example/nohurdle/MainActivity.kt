@@ -22,9 +22,7 @@ import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-//import androidx.core.graphics.toColorInt
 import java.io.BufferedReader
-//import kotlin.Int
 import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
