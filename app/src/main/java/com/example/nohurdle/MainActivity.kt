@@ -32,12 +32,12 @@ import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var searchButton: Button
+    private lateinit var resultsTable: GridLayout
 //    private lateinit var rootLayout: View //= findViewById<View>(R.id.root_layout)
 //    private lateinit var headerView : LinearLayout
 //    private lateinit var boxScroller: ScrollView //= findViewById<ScrollView>(R.id.boxScroller)
-    private lateinit var searchButton: Button
 //    private lateinit var resultsScroller: ScrollView //= findViewById<ScrollView>(R.id.resultsScroller)
-    private lateinit var resultsTable: GridLayout
 
     private lateinit var inputBoxTable: LinearLayout
     private val numBoxesPerRow = 5
@@ -50,14 +50,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-//        rootLayout = findViewById<View>(R.id.root_layout)
-//        headerView = findViewById<LinearLayout>(R.id.header)
         val resetButton = findViewById<ImageButton>(R.id.resetButton)
-//        boxScroller = findViewById<ScrollView>(R.id.boxScroller)
         inputBoxTable = findViewById<LinearLayout>(R.id.inputBoxes)
         searchButton  = findViewById<Button>(R.id.findWords)
-//        resultsScroller = findViewById<ScrollView>(R.id.resultsScroller)
         resultsTable  = findViewById<GridLayout>(R.id.resultsTable)
+//        rootLayout = findViewById<View>(R.id.root_layout)
+//        headerView = findViewById<LinearLayout>(R.id.header)
+//        boxScroller = findViewById<ScrollView>(R.id.boxScroller)
+//        resultsScroller = findViewById<ScrollView>(R.id.resultsScroller)
 
         addNewRow()
         attachListenersToAllBoxes()
