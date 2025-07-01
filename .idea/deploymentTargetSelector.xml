@@ -2,7 +2,7 @@
 <project version="4">
   <component name="deploymentTargetSelector">
     <selectionStates>
-      <SelectionState runConfigName="Over_the_Hurdle.app">
+      <SelectionState runConfigName="No_Hurdle.app">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
     </selectionStates>

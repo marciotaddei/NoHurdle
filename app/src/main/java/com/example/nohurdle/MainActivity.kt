@@ -1,7 +1,6 @@
-package com.example.overthehurdle
+package com.example.nohurdle
 
 import android.content.res.Resources
-//import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Bundle
@@ -14,8 +13,6 @@ import android.util.TypedValue
 import android.view.Gravity
 import android.view.KeyEvent
 import android.view.View
-//import android.view.ViewGroup
-//import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
@@ -24,9 +21,9 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.LinearLayout
 import android.widget.ScrollView
-//import android.widget.TableLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+//import androidx.compose.material3.Text
 import androidx.core.content.ContextCompat
 import androidx.core.graphics.toColorInt
 import java.io.BufferedReader
@@ -62,21 +59,14 @@ class MainActivity : AppCompatActivity() {
         resultsScroller = findViewById<ScrollView>(R.id.resultsScroller)
         resultsTable  = findViewById<GridLayout>(R.id.resultsTable)
 
-//        rootLayout.viewTreeObserver.addOnGlobalLayoutListener(object :
-//            ViewTreeObserver.OnGlobalLayoutListener {
-//            override fun onGlobalLayout() {updateScrollerHeights()}})
-
         addNewRow()
         attachListenersToAllBoxes()
-//        runAfterNextLayout(inputBoxTable) {updateScrollerHeights()}
 
         resetButton.setOnClickListener {
             resultsTable.removeAllViews()
             inputBoxTable.removeAllViews()
             addNewRow()
             attachListenersToAllBoxes()
-//            inputBoxTable.requestLayout()
-//            inputBoxTable.post{updateScrollerHeights()} //resultsTable will have 0 height
         }
 
         searchButton.setOnClickListener {
@@ -88,6 +78,7 @@ class MainActivity : AppCompatActivity() {
                     val rowLayout = rowEditTexts.first().parent as? LinearLayout
                     rowLayout?.let { inputBoxTable.removeView(it) }
                     rows.removeAt(i)
+                    attachListenersToAllBoxes()
                 }
             }
 
@@ -108,24 +99,11 @@ class MainActivity : AppCompatActivity() {
                         val matches = findMatches(currentKnowledge, wordledDict)
                         printWords(matches, resultsTable, i)}
 
-//            resultsTable.requestLayout()
-//            resultsTable.post {updateScrollerHeights()}
-
             theToast?.cancel()
             theToast = null
-
+            searchButton.requestFocus()
         }
     }
-
-//    private fun runAfterNextLayout(view: View, action: () -> Unit) {
-//        view.viewTreeObserver.addOnPreDrawListener(object : ViewTreeObserver.OnPreDrawListener {
-//            override fun onPreDraw(): Boolean {
-//                view.viewTreeObserver.removeOnPreDrawListener(this)
-//                action()
-//                return true
-//            }
-//        })
-//    }
 
     private fun addNewRow() {
         val rowLayout = LinearLayout(this).apply {
@@ -154,15 +132,15 @@ class MainActivity : AppCompatActivity() {
                 textSize = 40f
                 typeface = Typeface.DEFAULT_BOLD
                 imeOptions = EditorInfo.IME_ACTION_NEXT
+                isLongClickable = true
                 setBackgroundResource(coloredBoxes[0])
                 cellColorMap[this] = 0
-
                 //the colors have no inter-cell relation, so create the listener here
-                setOnClickListener {
+                setOnLongClickListener {
                     val nextIndex = ((cellColorMap[this] ?: 0) + 1) % coloredBoxes.size
                     setBackgroundResource(coloredBoxes[nextIndex])
                     cellColorMap[this] = nextIndex
-                }
+                    true}
             }
             rowEditTexts.add(editText)
             rowLayout.addView(editText)
@@ -206,8 +184,6 @@ class MainActivity : AppCompatActivity() {
                             if (row.all { it.text.length == 1 } && rowIndex == rows.lastIndex ) {
                                 addNewRow()
                                 attachListenersToAllBoxes()
-//                                inputBoxTable.requestLayout()
-//                                inputBoxTable.post{updateScrollerHeights()}
                             }
                         }
                     }
@@ -235,61 +211,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-//    private fun isLastRow(rowIndex: Int): Boolean {
-//        return rowIndex == rows.lastIndex
-//    }
-
     private fun moveToNextInput(rowIndex: Int, colIndex: Int) {
         if (rowIndex >= rows.size) return
-
         val currentRow = rows[rowIndex]
-
         // Move to next in same row
-        if (colIndex < currentRow.lastIndex) {
-            currentRow[colIndex + 1].requestFocus()
-        }
+        if (colIndex < currentRow.lastIndex) {currentRow[colIndex + 1].requestFocus()}
         // Move to first in next row
-        else if (rowIndex < rows.lastIndex) {
-            rows[rowIndex + 1][0].requestFocus()
-        }
+        else if (rowIndex < rows.lastIndex) {rows[rowIndex + 1][0].requestFocus()}
     }
 
-
-//    private fun updateScrollerHeights() {
-//        val topHeight = inputBoxTable.measuredHeight
-//        val bottomHeight = resultsTable.measuredHeight
-//        val remainingHeight = rootLayout.height
-//                -headerView.height - searchButton.height
-//
-//        when {
-//            topHeight + bottomHeight <= remainingHeight -> {
-//                // Both fit, give exact height
-//                boxScroller.layoutParams.height = topHeight
-//                resultsScroller.layoutParams.height = bottomHeight
-//            }
-//
-//            topHeight <= remainingHeight / 3 -> {
-//                // Top is short, give it only what it needs
-//                boxScroller.layoutParams.height = topHeight
-//                resultsScroller.layoutParams.height = remainingHeight - topHeight
-//            }
-//
-//            bottomHeight <= remainingHeight / 3 -> {
-//                // Bottom is short
-//                resultsScroller.layoutParams.height = bottomHeight
-//                boxScroller.layoutParams.height = remainingHeight - bottomHeight
-//            }
-//
-//            else -> {
-//                // Both are big → apply default 2:1 ratio
-//                boxScroller.layoutParams.height = remainingHeight * 2 / 3
-//                resultsScroller.layoutParams.height = remainingHeight / 3
-//            }
-//        }
-//        Log.d("LayoutDebug", "TopH: $topHeight  BottomH: $bottomHeight  Available: $remainingHeight")
-//        boxScroller.requestLayout()
-//        resultsScroller.requestLayout()
-//    }
 
     private fun findMatches(currentKnowledge: List<List<Pair<Char?,Int>>>,
                             wordledDict:List<String>):List<String>{
@@ -397,8 +327,20 @@ class MainActivity : AppCompatActivity() {
                     height = GridLayout.LayoutParams.WRAP_CONTENT
                     columnSpec = GridLayout.spec(GridLayout.UNDEFINED, 1f)
                 }
+                isClickable = true
+                tag = word
+                setOnClickListener { v -> addWordToBoxes(v.tag as String) }
             }
             resultsTable.addView(textView)
+        }
+    }
+
+    private fun addWordToBoxes(word: String){
+        //add new row if last one not empty
+        if(rows.last().any{!it.text.isNullOrBlank()})
+            {addNewRow(); attachListenersToAllBoxes()}
+        rows.last().forEachIndexed { i, box ->
+            box.setText(word[i].uppercaseChar().toString())
         }
     }
 }

@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">NoHurdle</string>
-    <string name="txt_gear_icon">gear icon</string>
+    <string name="reset_icon">reset icon</string>
     <string name="app_title">NoHurdle</string>
     <string name="find_words_button_text">FIND WORDS</string>
+    <string name="logo_hurdle">Logo hurdle</string>
 </resources>

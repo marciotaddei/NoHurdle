@@ -1,4 +1,4 @@
-package com.example.overthehurdle.ui.theme
+package com.example.nohurdle.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

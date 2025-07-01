@@ -14,10 +14,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/root_layout"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="16dp"
+    android:paddingHorizontal="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="4dp"
     android:theme="@style/Theme.NoHurdle">
 
     <LinearLayout
@@ -28,25 +31,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
 
-<!--        <ImageView-->
-<!--            android:id="@+id/beeLogoImage"-->
-<!--            android:layout_width="0sp"-->
-<!--            android:layout_weight="1"-->
-<!--            android:layout_height="match_parent"-->
-<!--            android:src="@drawable/bee_logo"-->
-<!--            android:padding="0dp"-->
-<!--            android:scaleType="fitCenter"-->
-<!--            android:contentDescription="@string/txt_bee_logo"/>-->
-
-        <TextView
-            android:id="@+id/appLogo"
+        <ImageView
+            android:id="@+id/logoImage"
             android:layout_width="0sp"
             android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:gravity="top|center_horizontal"
-            android:includeFontPadding="false"
-            android:text="🚧"
-            android:textSize="40sp"/>
+            android:layout_height="match_parent"
+            android:src="@drawable/w_icon"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/logo_hurdle"/>
 
         <TextView
             android:id="@+id/appTitle"
@@ -65,8 +58,8 @@
             android:layout_width="0sp"
             android:layout_weight="1"
             android:padding="8sp"
-            android:contentDescription="@string/txt_gear_icon"
-            android:src="@drawable/gear"
+            android:contentDescription="@string/reset_icon"
+            android:src="@drawable/reset"
             android:scaleType="fitCenter"
             android:background="?attr/selectableItemBackgroundBorderless"/>
 

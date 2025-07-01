@@ -1,4 +1,4 @@
-package com.example.overthehurdle
+package com.example.nohurdle
 
 import org.junit.Test
 
