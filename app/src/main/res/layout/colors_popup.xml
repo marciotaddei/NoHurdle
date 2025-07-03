@@ -17,7 +17,7 @@
         android:src="@drawable/box_wrong"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="2dp"
-        android:contentDescription="gray"/>
+        android:contentDescription="@string/gray"/>
 
     <ImageButton
         android:id="@+id/boxYellow"
@@ -26,7 +26,7 @@
         android:src="@drawable/box_elsewhere"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="2dp"
-        android:contentDescription="yellow"/>
+        android:contentDescription="@string/yellow"/>
 
     <ImageButton
         android:id="@+id/boxGreen"
@@ -35,7 +35,7 @@
         android:src="@drawable/box_correct"
         android:background="?attr/selectableItemBackgroundBorderless"
         android:padding="2dp"
-        android:contentDescription="green"/>
+        android:contentDescription="@string/green"/>
 
     <!-- add more as needed -->
 </LinearLayout>

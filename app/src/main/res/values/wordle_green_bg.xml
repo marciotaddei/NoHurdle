@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <color name="wordle_green_bg" tools:keep="@color/wordle_green_bg">#6CA965</color>
-</resources>

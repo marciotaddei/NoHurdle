@@ -1,8 +1,10 @@
 package com.example.nohurdle
 
+import android.annotation.SuppressLint
 import android.content.res.Resources
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputFilter
@@ -24,6 +26,7 @@ import android.widget.TextView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
@@ -32,15 +35,14 @@ import kotlin.math.max
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var searchButton: Button
-    private lateinit var resultsTable: GridLayout
 //    private lateinit var rootLayout: View //= findViewById<View>(R.id.root_layout)
 //    private lateinit var headerView : LinearLayout
 //    private lateinit var boxScroller: ScrollView //= findViewById<ScrollView>(R.id.boxScroller)
+//    private lateinit var searchButton: Button
 //    private lateinit var resultsScroller: ScrollView //= findViewById<ScrollView>(R.id.resultsScroller)
-
+//    private lateinit var resultsTable: GridLayout
     private lateinit var inputBoxTable: LinearLayout
-    private val numBoxesPerRow = 5
+
     private val rows = mutableListOf<List<EditText>>() // Store 2D list of rows
     val coloredBoxes = listOf(R.drawable.box_wrong,
                         R.drawable.box_elsewhere, R.drawable.box_correct )
@@ -51,10 +53,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val resetButton = findViewById<ImageButton>(R.id.resetButton)
+        val iconButton = findViewById<ImageButton>(R.id.iconButton)
+        val aboutButton = findViewById<ImageButton>(R.id.aboutButton)
         inputBoxTable = findViewById<LinearLayout>(R.id.inputBoxes)
-        searchButton  = findViewById<Button>(R.id.findWords)
-        resultsTable  = findViewById<GridLayout>(R.id.resultsTable)
+        val searchButton  = findViewById<Button>(R.id.findWords)
+        val resetButton = findViewById<ImageButton>(R.id.resetButton)
+        val resultsTable  = findViewById<GridLayout>(R.id.resultsTable)
 //        rootLayout = findViewById<View>(R.id.root_layout)
 //        headerView = findViewById<LinearLayout>(R.id.header)
 //        boxScroller = findViewById<ScrollView>(R.id.boxScroller)
@@ -63,9 +67,43 @@ class MainActivity : AppCompatActivity() {
         addNewRow()
         attachListenersToAllBoxes()
 
+        iconButton.setOnClickListener {
+            // 1) Simple message-only dialog
+            AlertDialog.Builder(this)
+                .setTitle("Icon attribution")
+                .setMessage("Icon from Hurdle 27600 by Desbenoit "+
+                            "from thenounproject.com (CC BY 3.0)")
+                .setPositiveButton("OK", null)
+                .show()
+        }
+
+        aboutButton.setOnClickListener {
+            AlertDialog.Builder(this)
+                .setTitle("Help/About")
+                .setMessage(
+                    "The NoHurdle app helps you with Wordle-like problems. " +
+                    "Type in the word(s) you have input, and set the color "+
+                    "the game has shown for each letter, either by tapping "+
+                    "repeatedly or long-pressing for a pop-up. "+
+                    "Defaults to gray if color is not set.\n\n"+
+                     
+                    "Press the \"find words\" button to see the candidates. "+
+                    "You can click a candidate below to add it to the words above.\n\n"+
+
+                    "The app narrows down the possible words, but it doesn't " +
+                    "know the answer for today's problem " +
+                    "(that would make the game completely trivial).\n\n" +
+                      
+                    "App icon based on Hurdle 27600 by Desbenoit from thenounproject.com (CC BY 3.0)"
+                )
+                .setPositiveButton("OK", null)
+                .show()
+        }
+
         resetButton.setOnClickListener {
             resultsTable.removeAllViews()
             inputBoxTable.removeAllViews()
+            rows.clear()
             addNewRow()
             attachListenersToAllBoxes()
         }
@@ -82,9 +120,9 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
-            val currentKnowledge = rows.map{row->
+            var currentKnowledge = rows.map{row->
             row.map{Pair(it.text.firstOrNull()?.lowercaseChar(), cellColorMap[it]!!)}}
-            if(currentKnowledge.all{row -> row.all{it.first==null || it.second==-1}})
+            if(currentKnowledge.all{row -> row.all{it.first==null}})
                 return@setOnClickListener
 
             var theToast: Toast? = null
@@ -106,6 +144,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun addNewRow() {
+        val numBoxesPerRow = 5
         val rowLayout = LinearLayout(this).apply {
             orientation = LinearLayout.HORIZONTAL
             layoutParams = LinearLayout.LayoutParams(
@@ -132,7 +171,8 @@ class MainActivity : AppCompatActivity() {
                 textSize = 40f
                 typeface = Typeface.DEFAULT_BOLD
                 imeOptions = EditorInfo.IME_ACTION_NEXT
-                importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    {importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO}
                 isLongClickable = true
                 setBackgroundResource(R.drawable.box_default)
                 cellColorMap[this] = 0
@@ -142,7 +182,9 @@ class MainActivity : AppCompatActivity() {
                     setBackgroundResource(coloredBoxes[nextIndex])
                     cellColorMap[this] = nextIndex}
                 //Pop-up on long click
+
                 setOnLongClickListener{cell ->
+                    @SuppressLint("InflateParams")
                     val popupView = LayoutInflater.from(context)
                         .inflate(R.layout.colors_popup, null, false)
 

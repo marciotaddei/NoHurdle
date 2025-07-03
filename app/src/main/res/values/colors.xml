@@ -1,9 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="white">#FFFFFFFF</color>
+    <color name="black">#FF000000</color>
+    <color name="transparent">#00000000</color>
     <color name="light_red">#FFF09090</color>
     <color name="light_yellow">#FFF0F090</color>
     <color name="light_green">#FF90F090</color>
     <color name="light_gray">#FFB0B0B0</color>
-    <color name="white">#FFFFFFFF</color>
-    <color name="black">#FF000000</color>
+    <color name="wordle_gray">#FF3A3A3C</color>
+    <color name="wordle_yellow">#C8B653</color>
+    <color name="wordle_green">#6CA965</color>
 </resources>

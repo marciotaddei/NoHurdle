@@ -6,9 +6,9 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@mipmap/w_icon"
+        android:icon="@mipmap/hurdle_icon"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/w_icon_round"
+        android:roundIcon="@mipmap/hurdle_icon_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.NoHurdle"
         tools:targetApi="31">
