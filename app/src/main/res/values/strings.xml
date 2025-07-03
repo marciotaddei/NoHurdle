@@ -8,6 +8,4 @@
     <string name="green">green</string>
     <string name="gray">gray</string>
     <string name="help_about_text">Help/About</string>
-    <string name="question_mark">\?</string>
-    <string name="about_icon_text">about icon</string>
 </resources>
