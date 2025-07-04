@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageButton
+            android:id="@+id/iconButton"
+            android:layout_width="0sp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:contentDescription="@string/logo_hurdle"
+            android:padding="0dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/no_hurdle"
+            android:background="@color/transparent"
+            tools:ignore="TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/appTitle"
+            android:layout_width="0sp"
+            android:layout_weight="6"
+            android:layout_height="wrap_content"
+            android:gravity="top|center_horizontal"
+            android:includeFontPadding="false"
+            android:text="@string/app_title"
+            android:fontFamily="@font/alfa_slab_one"
+            android:textSize="42sp"/>
+
+        <androidx.constraintlayout.widget.Placeholder
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="140dp"
+        android:layout_margin="20dp"
+        android:contentDescription="@string/please_rotate_into_portrait"
+        android:src="@drawable/rotate_phone_to_vertical"/>
+
+    <TextView
+        android:text="@string/please_rotate_into_portrait"
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="28sp"/>
+
+
+    <!-- Dummy placeholders so your code’s findViewById won’t return null -->
+    <ImageButton
+        android:id="@+id/aboutButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        tools:ignore="ContentDescription" />
+
+    <LinearLayout
+        android:id="@+id/inputBoxes"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/findWords"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+
+    <ImageButton
+        android:id="@+id/resetButton"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        tools:ignore="ContentDescription"/>
+
+    <GridLayout
+        android:id="@+id/resultsTable"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"/>
+
+</LinearLayout>

@@ -8,4 +8,5 @@
     <string name="green">green</string>
     <string name="gray">gray</string>
     <string name="help_about_text">Help/About</string>
+    <string name="please_rotate_into_portrait">Sorry, we can\'t fit everything on the screen.\n Please rotate your device into portrait to use the app.</string>
 </resources>

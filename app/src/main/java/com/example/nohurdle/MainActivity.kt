@@ -1,7 +1,6 @@
 package com.example.nohurdle
 
 import android.annotation.SuppressLint
-import android.content.res.Resources
 import android.graphics.Paint
 import android.graphics.Typeface
 import android.os.Build
@@ -44,14 +43,15 @@ class MainActivity : AppCompatActivity() {
     private lateinit var inputBoxTable: LinearLayout
 
     private val rows = mutableListOf<List<EditText>>() // Store 2D list of rows
-    val coloredBoxes = listOf(R.drawable.box_wrong,
+    val coloredBoxes = listOf(R.drawable.box_wrong, //R.drawable.box_default,
                         R.drawable.box_elsewhere, R.drawable.box_correct )
     val cellColorMap = mutableMapOf<EditText, Int>()
-    //R.drawable.box_default,
+    private var boxTextSize = 40f
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        Log.i("LayoutDebug", "Inflated layout: "+R.layout.activity_main.toString())
 
         val iconButton = findViewById<ImageButton>(R.id.iconButton)
         val aboutButton = findViewById<ImageButton>(R.id.aboutButton)
@@ -63,6 +63,7 @@ class MainActivity : AppCompatActivity() {
 //        headerView = findViewById<LinearLayout>(R.id.header)
 //        boxScroller = findViewById<ScrollView>(R.id.boxScroller)
 //        resultsScroller = findViewById<ScrollView>(R.id.resultsScroller)
+        boxTextSize = resources.displayMetrics.widthPixels*.04f
 
         addNewRow()
         attachListenersToAllBoxes()
@@ -71,7 +72,7 @@ class MainActivity : AppCompatActivity() {
             // 1) Simple message-only dialog
             AlertDialog.Builder(this)
                 .setTitle("Icon attribution")
-                .setMessage("Icon from Hurdle 27600 by Desbenoit "+
+                .setMessage("Icon from Hurdle 27600 by Desensitise "+
                             "from thenounproject.com (CC BY 3.0)")
                 .setPositiveButton("OK", null)
                 .show()
@@ -94,7 +95,7 @@ class MainActivity : AppCompatActivity() {
                     "know the answer for today's problem " +
                     "(that would make the game completely trivial).\n\n" +
                       
-                    "App icon based on Hurdle 27600 by Desbenoit from thenounproject.com (CC BY 3.0)"
+                    "App icon based on Hurdle 27600 by Desensitise from thenounproject.com (CC BY 3.0)"
                 )
                 .setPositiveButton("OK", null)
                 .show()
@@ -168,7 +169,8 @@ class MainActivity : AppCompatActivity() {
                 setPadding(0, 0, 0, 0)
                 gravity = Gravity.CENTER
                 setTextColor(getColor(R.color.white))
-                textSize = 40f
+                textSize = boxTextSize//40f
+                Log.d("Box Text Size", this.textSize.toString())
                 typeface = Typeface.DEFAULT_BOLD
                 imeOptions = EditorInfo.IME_ACTION_NEXT
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
@@ -379,7 +381,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun printWords(matches: List<String>, resultsTable: GridLayout, category: Int){
-        val cellWidth = Resources.getSystem().displayMetrics.widthPixels/resultsTable.columnCount
+        val cellWidth = resources.displayMetrics.widthPixels/resultsTable.columnCount
         val paint = Paint().apply {
             typeface = Typeface.DEFAULT_BOLD
             textSize = 100f} // Arbitrary large size for scale factor

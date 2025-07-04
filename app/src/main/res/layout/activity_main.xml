@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -21,12 +20,14 @@
         <ImageButton
             android:id="@+id/iconButton"
             android:layout_width="0sp"
-            android:layout_weight="1"
             android:layout_height="match_parent"
-            android:src="@drawable/no_hurdle"
+            android:layout_weight="1"
+            android:contentDescription="@string/logo_hurdle"
             android:padding="0dp"
             android:scaleType="fitCenter"
-            android:contentDescription="@string/logo_hurdle"/>
+            android:src="@drawable/no_hurdle"
+            android:background="@color/transparent"
+            tools:ignore="TouchTargetSizeCheck" />
 
 
         <TextView
@@ -37,8 +38,8 @@
             android:gravity="top|center_horizontal"
             android:includeFontPadding="false"
             android:text="@string/app_title"
-            android:textSize="45sp"
-            android:textStyle="bold"/>
+            android:fontFamily="@font/alfa_slab_one"
+            android:textSize="42sp"/>
 
         <ImageButton
             android:id="@+id/aboutButton"
@@ -82,7 +83,8 @@
         android:textSize="22sp"
         android:textStyle="bold"
         android:text="@string/find_words_button_text"
-        android:layout_marginEnd="24dp"/>
+        android:layout_marginEnd="24dp"
+        tools:ignore="VisualLintButtonSize" />
     <ImageButton
         android:id="@+id/resetButton"
         android:layout_height="match_parent"
@@ -114,6 +116,5 @@
             android:alignmentMode="alignMargins"
             android:useDefaultMargins="true"/>
     </ScrollView>
-
 
 </LinearLayout>
