@@ -23,7 +23,7 @@
         <item name="android:fontFamily">@font/roboto_bold</item>
     </style>
 
-<!--  Decided to leave TextView (words below) and alert dialog to use system fonts -->
+<!--  Decided to leave TextView (words below the button) and alert dialog with system fonts -->
     <!--    <style name="Custom.TextView" parent="Widget.AppCompat.TextView">-->
     <!--        <item name="android:fontFamily">@font/roboto_bold</item>-->
     <!--    </style>-->
