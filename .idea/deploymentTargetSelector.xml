@@ -4,10 +4,10 @@
     <selectionStates>
       <SelectionState runConfigName="No_Hurdle.app">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2025-07-07T14:15:59.683737300Z">
+        <DropdownSelection timestamp="2025-07-07T14:16:35.200639900Z">
           <Target type="DEFAULT_BOOT">
             <handle>
-              <DeviceId pluginId="PhysicalDevice" identifier="serial=ZY22KR3VXR" />
+              <DeviceId pluginId="PhysicalDevice" identifier="serial=6h8pgiqsjj6lzdus" />
             </handle>
           </Target>
         </DropdownSelection>
