@@ -27,6 +27,8 @@ import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.AppCompatEditText
+import androidx.appcompat.widget.AppCompatTextView
 import androidx.core.content.ContextCompat
 import androidx.core.view.updateLayoutParams
 import java.io.BufferedReader
@@ -72,7 +74,7 @@ class MainActivity : AppCompatActivity() {
             // 1) Simple message-only dialog
             AlertDialog.Builder(this)
                 .setTitle("Icon attribution")
-                .setMessage("Icon from Hurdle 27600 by Desensitise "+
+                .setMessage("Icon from Hurdle 27600 by Desbenoit "+
                             "from thenounproject.com (CC BY 3.0)")
                 .setPositiveButton("OK", null)
                 .show()
@@ -95,7 +97,7 @@ class MainActivity : AppCompatActivity() {
                     "know the answer for today's problem " +
                     "(that would make the game completely trivial).\n\n" +
                       
-                    "App icon based on Hurdle 27600 by Desensitise from thenounproject.com (CC BY 3.0)"
+                    "App icon based on Hurdle 27600 by Desbenoit from thenounproject.com (CC BY 3.0)"
                 )
                 .setPositiveButton("OK", null)
                 .show()
@@ -116,8 +118,7 @@ class MainActivity : AppCompatActivity() {
             //set box_default to box_wrong
             rows.forEach{row-> row.forEach { cell ->
                 if(!cell.text.isEmpty() && cellColorMap[cell]==0)
-                    {Log.d("Inner forEach", cell.text.toString())
-                    cell.setBackgroundResource(coloredBoxes[0])}
+                    {cell.setBackgroundResource(coloredBoxes[0])}
                 }
             }
 
@@ -156,7 +157,7 @@ class MainActivity : AppCompatActivity() {
 
         val rowEditTexts = mutableListOf<EditText>()
         repeat(numBoxesPerRow) {
-            val editText = EditText(this).apply {
+            val editText = AppCompatEditText(this).apply {
                 layoutParams = LinearLayout.LayoutParams(0, 0, 1f).apply {setMargins(4, 4, 4, 4)}
                 inputType = InputType.TYPE_TEXT_FLAG_CAP_CHARACTERS
                 filters = arrayOf(
@@ -171,7 +172,7 @@ class MainActivity : AppCompatActivity() {
                 setTextColor(getColor(R.color.white))
                 textSize = boxTextSize//40f
                 Log.d("Box Text Size", this.textSize.toString())
-                typeface = Typeface.DEFAULT_BOLD
+                //typeface = Typeface.DEFAULT_BOLD //set through theme roboto_bold
                 imeOptions = EditorInfo.IME_ACTION_NEXT
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                     {importantForAutofill = View.IMPORTANT_FOR_AUTOFILL_NO}
@@ -193,18 +194,20 @@ class MainActivity : AppCompatActivity() {
                     val popupWindow = PopupWindow(popupView,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
                         ViewGroup.LayoutParams.WRAP_CONTENT,
-                        true) //optional part later
+                        true)
 
                     listOf(R.id.boxGray, R.id.boxYellow, R.id.boxGreen)
                         .forEach{box->
                             popupView.findViewById<ImageButton>(box).
                             apply{updateLayoutParams<LinearLayout.LayoutParams>{
-                                height = cell.width*3/4
-                                width  = cell.width*3/4}
+                                height = cell.width*2/3
+                                width  = cell.width*2/3}
                             }
                         }
 
-                    popupWindow.showAsDropDown(cell,0,0,Gravity.CENTER_HORIZONTAL)
+                    //calculating the offset to center the popup to cell
+                    popupWindow.showAsDropDown(cell,
+                        (popupWindow.contentView.measuredWidth-cell.width)/2,0)
 
                     popupView.findViewById<ImageButton>(R.id.boxGray)
                         .setOnClickListener{
@@ -388,18 +391,18 @@ class MainActivity : AppCompatActivity() {
         val maxTextSizePx = 100f * (cellWidth * 0.9f / paint.measureText("MMMMM"))
 
         //variable for background color and text on how likely
-        val likelyColor = when(category){
+        val likelihoodColor = when(category){
             0->Pair("likely",ContextCompat.getColor(this, R.color.light_green))
             1->Pair("less likely",ContextCompat.getColor(this, R.color.light_yellow))
             2->Pair("unlikely",ContextCompat.getColor(this, R.color.light_red))
             else->Pair("unknown-status",ContextCompat.getColor(this, R.color.light_gray))}
 
-        val string = likelyColor.first +" words: " + matches.size.toString()
-        val header = TextView(this).apply {
+        val string = likelihoodColor.first +" words: " + matches.size.toString()
+        val header = AppCompatTextView(this).apply {
             text = string
             setTextColor(ContextCompat.getColor(context,R.color.white))
             gravity = Gravity.CENTER
-            typeface = Typeface.DEFAULT_BOLD
+            typeface = Typeface.DEFAULT_BOLD //set via roboto_bold font
             layoutParams = GridLayout.LayoutParams(
                 GridLayout.spec(GridLayout.UNDEFINED),  // current row
                 GridLayout.spec(0, 4)  // span 4 columns
@@ -408,14 +411,14 @@ class MainActivity : AppCompatActivity() {
         resultsTable.addView(header)
 
         for (word in matches) {
-            val textView = TextView(this).apply {
+            val textView = AppCompatTextView(this).apply {
                 text = word.uppercase()
-                typeface = Typeface.DEFAULT_BOLD
+                typeface = Typeface.DEFAULT_BOLD //set via roboto_bold font
                 setPadding(0, 0, 0, 0)
                 setTextSize(TypedValue.COMPLEX_UNIT_PX,maxTextSizePx)
                 setTextColor(ContextCompat.getColor(context, R.color.black))
                 gravity = Gravity.CENTER
-                setBackgroundColor(likelyColor.second)
+                setBackgroundColor(likelihoodColor.second)
                 layoutParams = GridLayout.LayoutParams().apply {
                     width = 0
                     height = GridLayout.LayoutParams.WRAP_CONTENT
