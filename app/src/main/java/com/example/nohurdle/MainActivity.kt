@@ -21,7 +21,6 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.GridLayout
 import android.widget.ImageButton
-import android.widget.TextView
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import android.widget.Toast
